@@ -1,14 +1,8 @@
 /* eslint-disable no-undef */
 const { s3 } = require('./config');
 
-const uploadFile = (bucketName, file) => {
-  return s3
-    .upload({
-      Bucket: bucketName,
-      Key: 'test.jpg', // Calculate to be unique
-      Body: file,
-    })
-    .promise();
+const uploadFile = (params) => {
+  return s3.upload(params).promise();
 };
 
 const listBuckets = () => {
@@ -79,6 +73,14 @@ const setBucketCORS = (bucketName, corsConfig) => {
     .promise();
 };
 
+const createS3signedURL = (bucket) => {
+  return s3.getSignedUrlPromise('putObject', {
+    Bucket: bucket,
+    Key: new Date().toISOString(),
+    Expires: 300,
+  });
+};
+
 module.exports = {
   listBuckets,
   createBucket,
@@ -87,4 +89,5 @@ module.exports = {
   getBucketCORS,
   setBucketCORS,
   uploadFile,
+  createS3signedURL,
 };
